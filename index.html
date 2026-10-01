@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f654c">
+  <title>今日习惯 · 每日打卡</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f1e8;
+      --surface: rgba(255, 255, 255, 0.9);
+      --surface-solid: #ffffff;
+      --ink: #173b2e;
+      --muted: #718078;
+      --line: #e5e4d9;
+      --green: #2e8060;
+      --green-dark: #1d5e47;
+      --green-soft: #e7f2eb;
+      --cream: #fbfaf6;
+      --danger: #b94e45;
+      --shadow: 0 22px 60px rgba(35, 67, 51, 0.12);
+      --font: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(157, 205, 176, 0.28), transparent 25rem),
+        radial-gradient(circle at 92% 28%, rgba(242, 212, 158, 0.22), transparent 22rem),
+        linear-gradient(180deg, #f8f6ef 0%, var(--bg) 55%, #f2eee4 100%);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid rgba(46, 128, 96, 0.28);
+      outline-offset: 2px;
+    }
+
+    .page-decoration {
+      position: fixed;
+      z-index: 0;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .page-decoration.one {
+      top: -90px;
+      right: -70px;
+      width: 240px;
+      height: 240px;
+      border: 1px solid rgba(46, 128, 96, 0.12);
+      box-shadow: inset 0 0 0 36px rgba(255, 255, 255, 0.16);
+    }
+
+    .page-decoration.two {
+      bottom: 6%;
+      left: -85px;
+      width: 180px;
+      height: 180px;
+      background: rgba(208, 229, 214, 0.28);
+    }
+
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      width: min(760px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 46px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 26px 28px 24px;
+      color: #f9fff9;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+        linear-gradient(145deg, #1b5943 0%, #2d7d5a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      box-shadow: 0 24px 70px rgba(24, 84, 61, 0.24);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      bottom: -120px;
+      width: 270px;
+      height: 270px;
+      border: 42px solid rgba(255, 255, 255, 0.055);
+      border-radius: 50%;
+    }
+
+    .hero-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      color: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-dot {
+      width: 7px;
+      height: 7px;
+      background: #b9e5c8;
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(185, 229, 200, 0.12);
+    }
+
+    .today-date {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 500px;
+      margin: 28px 0 8px;
+      font-family: "STSong", "Songti SC", "Noto Serif SC", serif;
+      font-size: clamp(30px, 6vw, 43px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .summary {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(150px, auto) 1fr;
+      align-items: center;
+      gap: 22px;
+      margin-top: 28px;
+      padding: 17px 18px;
+      background: rgba(9, 42, 30, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .summary-label {
+      display: block;
+      margin-bottom: 3px;
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .summary-count {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .summary-count strong { font-size: 32px; line-height: 1; }
+    .summary-count span { color: rgba(255, 255, 255, 0.72); font-size: 14px; }
+
+    .progress-copy {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 9px;
+      color: rgba(255, 255, 255, 0.77);
+      font-size: 12px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+    }
+
+    .progress-bar {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #bce7ca, #f0d89d);
+      border-radius: inherit;
+      box-shadow: 0 0 14px rgba(195, 239, 210, 0.4);
+      transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .panel {
+      margin-top: 18px;
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid rgba(229, 228, 217, 0.92);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .add-form {
+      display: flex;
+      gap: 9px;
+      padding: 7px;
+      background: #f5f2e9;
+      border: 1px solid #eae7dc;
+      border-radius: 18px;
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .add-form:focus-within {
+      background: #fff;
+      border-color: rgba(46, 128, 96, 0.45);
+      box-shadow: 0 0 0 4px rgba(46, 128, 96, 0.08);
+    }
+
+    .add-input {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      outline: 0;
+    }
+
+    .add-input::placeholder { color: #9aa49e; }
+
+    .add-button {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 0 18px;
+      color: #fff;
+      background: var(--green);
+      border-radius: 13px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(46, 128, 96, 0.2);
+      transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    }
+
+    .add-button:hover {
+      background: var(--green-dark);
+      box-shadow: 0 10px 22px rgba(46, 128, 96, 0.27);
+      transform: translateY(-1px);
+    }
+
+    .add-button:active { transform: translateY(0); }
+
+    .list-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 24px 3px 13px;
+    }
+
+    .list-heading h2 { margin: 0; font-size: 16px; letter-spacing: 0.01em; }
+    .list-status { color: var(--muted); font-size: 13px; text-align: right; }
+    .habit-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .habit-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 70px;
+      padding: 13px 13px 13px 16px;
+      background: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      animation: item-in 350ms both;
+      animation-delay: var(--delay, 0ms);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .habit-item:hover {
+      border-color: #d3ded6;
+      box-shadow: 0 8px 22px rgba(46, 83, 66, 0.07);
+      transform: translateY(-1px);
+    }
+
+    .habit-item.is-complete { background: #eff7f1; border-color: #cfe6d7; }
+
+    .habit-toggle {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .habit-checkbox {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .checkmark {
+      display: grid;
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      color: transparent;
+      background: #fff;
+      border: 2px solid #c9d7cf;
+      border-radius: 50%;
+      transition: color 180ms ease, background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .checkmark svg { width: 17px; height: 17px; stroke-width: 2.8; }
+
+    .habit-checkbox:checked + .checkmark {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+      transform: scale(1.04);
+    }
+
+    .habit-checkbox:focus-visible + .checkmark {
+      outline: 3px solid rgba(46, 128, 96, 0.28);
+      outline-offset: 3px;
+    }
+
+    .habit-name {
+      overflow: hidden;
+      color: #254438;
+      font-size: 15px;
+      font-weight: 650;
+      line-height: 1.4;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: color 180ms ease;
+    }
+
+    .habit-item.is-complete .habit-name {
+      color: #638273;
+      text-decoration: line-through;
+      text-decoration-color: rgba(99, 130, 115, 0.5);
+      text-decoration-thickness: 1.5px;
+    }
+
+    .habit-actions { display: flex; flex: 0 0 auto; gap: 3px; margin-left: auto; }
+
+    .icon-button {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      color: #84928b;
+      background: transparent;
+      border-radius: 11px;
+      transition: color 160ms ease, background 160ms ease;
+    }
+
+    .icon-button:hover { color: var(--green-dark); background: var(--green-soft); }
+    .icon-button.danger:hover { color: var(--danger); background: #faeeec; }
+
+    .icon-button svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
+    }
+
+    .rename-form { display: flex; flex: 1 1 auto; align-items: center; gap: 8px; min-width: 0; }
+
+    .rename-input {
+      width: 100%;
+      min-width: 0;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #cfe0d5;
+      border-radius: 12px;
+      outline: 0;
+    }
+
+    .rename-actions { display: flex; flex: 0 0 auto; gap: 5px; }
+
+    .small-button {
+      min-height: 38px;
+      padding: 0 12px;
+      color: #fff;
+      background: var(--green);
+      border-radius: 11px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .small-button.secondary { color: #68776f; background: #ecefe9; }
+
+    .empty-state { padding: 38px 20px 32px; text-align: center; }
+
+    .empty-icon {
+      display: grid;
+      width: 66px;
+      height: 66px;
+      margin: 0 auto 15px;
+      place-items: center;
+      color: var(--green);
+      background: var(--green-soft);
+      border-radius: 23px;
+      transform: rotate(-4deg);
+    }
+
+    .empty-icon svg {
+      width: 34px;
+      height: 34px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.7;
+    }
+
+    .empty-state h3 { margin: 0 0 7px; font-size: 16px; }
+    .empty-state p { max-width: 340px; margin: 0 auto; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+    .backup-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      margin-top: 16px;
+      padding: 18px 20px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(229, 228, 217, 0.9);
+      border-radius: 22px;
+    }
+
+    .backup-copy h3 { margin: 0 0 4px; font-size: 14px; }
+    .backup-copy p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .backup-actions { display: flex; flex: 0 0 auto; gap: 8px; }
+
+    .backup-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      padding: 0 13px;
+      color: var(--green-dark);
+      background: var(--green-soft);
+      border: 1px solid #d6e8dc;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .backup-button:hover { background: #dcece2; transform: translateY(-1px); }
+
+    .backup-button svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
+    }
+
+    .footer-note {
+      margin: 18px 0 0;
+      color: #8c9690;
+      font-size: 11px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 100;
+      left: 50%;
+      bottom: 28px;
+      max-width: min(420px, calc(100% - 32px));
+      padding: 12px 17px;
+      color: #fff;
+      background: #214f3d;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 15px 42px rgba(22, 58, 44, 0.24);
+      font-size: 13px;
+      font-weight: 650;
+      line-height: 1.5;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 16px);
+      transition: opacity 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+    .toast[data-type="error"] { background: #8f403b; }
+
+    .celebration {
+      position: fixed;
+      z-index: 90;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .celebration.is-visible { opacity: 1; }
+
+    .celebration-message {
+      position: relative;
+      z-index: 2;
+      padding: 18px 24px;
+      color: #fff;
+      background: rgba(26, 88, 65, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(18, 64, 47, 0.28);
+      text-align: center;
+      animation: message-pop 1.9s both cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .celebration-message strong { display: block; margin-bottom: 3px; font-size: 18px; }
+    .celebration-message span { color: rgba(255, 255, 255, 0.74); font-size: 12px; }
+
+    .confetti {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 9px;
+      height: 15px;
+      background: var(--color);
+      border-radius: 3px;
+      opacity: 0;
+      animation: confetti-burst 1.55s var(--delay) cubic-bezier(0.2, 0.72, 0.28, 1) forwards;
+    }
+
+    @keyframes item-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes message-pop {
+      0% { opacity: 0; transform: translateY(10px) scale(0.86); }
+      14%, 74% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    }
+
+    @keyframes confetti-burst {
+      0% { opacity: 0; transform: translate(-50%, -50%) rotate(0deg) scale(0.45); }
+      12% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--rotation)) scale(1);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app-shell { width: min(100% - 20px, 760px); padding: 10px 0 28px; }
+      .hero { padding: 22px 20px 20px; border-radius: 25px; }
+      .hero-top { align-items: flex-start; }
+      .today-date { max-width: 145px; font-size: 11px; }
+      .hero h1 { margin-top: 24px; font-size: clamp(30px, 10vw, 40px); }
+      .summary { grid-template-columns: 1fr; gap: 13px; padding: 15px; }
+      .panel { padding: 15px; border-radius: 23px; }
+      .add-form { align-items: stretch; }
+      .add-button { padding: 0 14px; }
+      .habit-item { min-height: 66px; padding-left: 13px; }
+      .habit-name { font-size: 14px; }
+      .backup-panel { align-items: stretch; flex-direction: column; gap: 13px; padding: 16px; }
+      .backup-actions { width: 100%; }
+      .backup-button { flex: 1; }
+      .toast { bottom: 16px; }
+    }
+
+    @media (max-width: 390px) {
+      .brand-chip { font-size: 11px; }
+      .today-date { max-width: 120px; }
+      .add-button span:last-child { display: none; }
+      .add-button { width: 48px; padding: 0; }
+      .habit-actions { gap: 0; }
+      .icon-button { width: 33px; }
+      .rename-actions { flex-direction: column; }
+      .small-button { min-height: 31px; padding: 0 9px; font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head><body>
+  <div class="page-decoration one" aria-hidden="true"></div>
+  <div class="page-decoration two" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-top">
+        <div class="brand-chip"><span class="brand-dot" aria-hidden="true"></span>今日习惯</div>
+        <time class="today-date" id="today-date"></time>
+      </div>
+      <h1 id="page-title">今日打卡</h1>
+      <p class="hero-copy">不必一次改变很多，完成眼前这一小项就很好。</p>
+
+      <div class="summary">
+        <div>
+          <span class="summary-label">今日进度</span>
+          <div class="summary-count">
+            <strong id="completed-count">0</strong>
+            <span>/ <span id="total-count">0</span> 项完成</span>
+          </div>
+        </div>
+        <div>
+          <div class="progress-copy">
+            <span id="progress-copy">从一个小目标开始</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="progress-track" id="progress-track" role="progressbar" aria-label="今日习惯完成进度" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
+            <span class="progress-bar" id="progress-bar"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="habit-heading">
+      <form class="add-form" id="add-form" autocomplete="off">
+        <label class="sr-only" for="habit-input" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">新习惯名称</label>
+        <input class="add-input" id="habit-input" name="habit" type="text" maxlength="32" placeholder="例如：喝够 8 杯水" aria-describedby="add-hint">
+        <button class="add-button" type="submit">
+          <span aria-hidden="true">＋</span>
+          <span>添加习惯</span>
+        </button>
+      </form>
+      <span id="add-hint" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">最多 32 个字，名称不能与现有习惯重复</span>
+
+      <div class="list-heading">
+        <h2 id="habit-heading">我的习惯</h2>
+        <span class="list-status" id="list-status" aria-live="polite">还没有习惯</span>
+      </div>
+
+      <ul class="habit-list" id="habit-list" aria-live="polite"></ul>
+
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21V10"></path>
+            <path d="M12 14c-3.8 0-6.5-2.2-6.5-5.8 3.8 0 6.5 2.1 6.5 5.8Z"></path>
+            <path d="M12 10.5c0-3.5 2.5-6 6.2-6 0 3.7-2.5 6-6.2 6Z"></path>
+          </svg>
+        </div>
+        <h3>先写下想坚持的第一件事</h3>
+        <p>喝水、散步、读书都可以。小到不需要犹豫，才更容易每天做到。</p>
+      </div>
+    </section>
+
+    <section class="backup-panel" aria-labelledby="backup-title">
+      <div class="backup-copy">
+        <h3 id="backup-title">数据保存在这台浏览器中</h3>
+        <p>建议偶尔导出备份，换设备或清理浏览器前也能保留记录。</p>
+      </div>
+      <div class="backup-actions">
+        <button class="backup-button" id="export-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v12"></path>
+            <path d="m7.5 10.5 4.5 4.5 4.5-4.5"></path>
+            <path d="M5 20h14"></path>
+          </svg>
+          导出备份
+        </button>
+        <button class="backup-button" id="import-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 21V9"></path>
+            <path d="m7.5 13.5 4.5-4.5 4.5 4.5"></path>
+            <path d="M5 4h14"></path>
+          </svg>
+          导入备份
+        </button>
+      </div>
+      <input id="import-input" type="file" accept=".json,application/json" hidden>
+    </section>
+
+    <p class="footer-note">每天的选择会按日期留在这里 · 不需要登录，也不会上传数据</p>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="celebration" id="celebration" aria-hidden="true"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "habit-tracker:v1";
+      const MAX_NAME_LENGTH = 32;
+      const ACTIVE_HABIT_LIMIT = 100;
+      const icons = {
+        edit: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>`,
+        trash: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 15H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>`,
+        check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"></path></svg>`
+      };
+
+      const elements = {
+        addForm: document.getElementById("add-form"),
+        habitInput: document.getElementById("habit-input"),
+        habitList: document.getElementById("habit-list"),
+        emptyState: document.getElementById("empty-state"),
+        listStatus: document.getElementById("list-status"),
+        todayDate: document.getElementById("today-date"),
+        completedCount: document.getElementById("completed-count"),
+        totalCount: document.getElementById("total-count"),
+        progressCopy: document.getElementById("progress-copy"),
+        progressPercent: document.getElementById("progress-percent"),
+        progressTrack: document.getElementById("progress-track"),
+        progressBar: document.getElementById("progress-bar"),
+        exportButton: document.getElementById("export-button"),
+        importButton: document.getElementById("import-button"),
+        importInput: document.getElementById("import-input"),
+        toast: document.getElementById("toast"),
+        celebration: document.getElementById("celebration")
+      };
+
+      let state = createEmptyState();
+      let currentDateKey = getLocalDateKey(new Date());
+      let editingId = null;
+      let toastTimer = null;
+      let midnightTimer = null;
+      let celebrationTimer = null;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      init();
+
+      function init() {
+        state = loadState();
+        currentDateKey = getLocalDateKey(new Date());
+        bindEvents();
+        render();
+        scheduleMidnightRefresh();
+      }
+
+      function bindEvents() {
+        elements.addForm.addEventListener("submit", handleAddHabit);
+        elements.habitList.addEventListener("change", handleToggleHabit);
+        elements.habitList.addEventListener("submit", handleRenameHabit);
+        elements.habitList.addEventListener("click", handleListClick);
+        elements.habitList.addEventListener("keydown", handleListKeydown);
+        elements.exportButton.addEventListener("click", exportBackup);
+        elements.importButton.addEventListener("click", () => elements.importInput.click());
+        elements.importInput.addEventListener("change", importBackup);
+        window.addEventListener("focus", refreshIfDateChanged);
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) refreshIfDateChanged();
+        });
+      }
+
+      function createEmptyState() {
+        return { version: 1, habits: [], checkins: {} };
+      }
+
+      function createId() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+          return window.crypto.randomUUID();
+        }
+        return `habit-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`;
+      }
+
+      function getActiveHabits() {
+        return state.habits.filter((habit) => !habit.archivedAt);
+      }
+
+      function getTodayCompletedIds() {
+        return new Set(state.checkins[currentDateKey] || []);
+      }
+
+      function getCompletedHabits() {
+        const completedIds = getTodayCompletedIds();
+        return getActiveHabits().filter((habit) => completedIds.has(habit.id));
+      }
+
+      function isTodayComplete() {
+        const activeHabits = getActiveHabits();
+        return activeHabits.length > 0 && getCompletedHabits().length === activeHabits.length;
+      }
+      function handleAddHabit(event) {
+        event.preventDefault();
+        const result = validateHabitName(elements.habitInput.value);
+
+        if (result.error) {
+          showToast(result.error, "error");
+          elements.habitInput.focus();
+          return;
+        }
+
+        if (getActiveHabits().length >= ACTIVE_HABIT_LIMIT) {
+          showToast(`最多可以同时保留 ${ACTIVE_HABIT_LIMIT} 个习惯`, "error");
+          return;
+        }
+
+        state.habits.push({
+          id: createId(),
+          name: result.name,
+          createdAt: new Date().toISOString(),
+          archivedAt: null
+        });
+
+        saveState();
+        elements.habitInput.value = "";
+        render();
+        elements.habitInput.focus();
+        showToast(`已添加“${result.name}”`);
+      }
+
+      function handleToggleHabit(event) {
+        const checkbox = event.target.closest("input[data-habit-id]");
+        if (!checkbox) return;
+
+        const habitId = checkbox.dataset.habitId;
+        if (!getActiveHabits().some((habit) => habit.id === habitId)) return;
+
+        const wasComplete = isTodayComplete();
+        const completedIds = getTodayCompletedIds();
+
+        if (checkbox.checked) {
+          completedIds.add(habitId);
+        } else {
+          completedIds.delete(habitId);
+        }
+
+        if (completedIds.size > 0) {
+          state.checkins[currentDateKey] = Array.from(completedIds);
+        } else {
+          delete state.checkins[currentDateKey];
+        }
+
+        saveState();
+        renderList(habitId);
+        renderSummary();
+
+        if (!wasComplete && isTodayComplete()) celebrate();
+      }
+
+      function handleListClick(event) {
+        const actionButton = event.target.closest("button[data-action]");
+        if (!actionButton || !elements.habitList.contains(actionButton)) return;
+
+        const habitId = actionButton.dataset.habitId;
+        const habit = state.habits.find((item) => item.id === habitId && !item.archivedAt);
+        if (!habit) return;
+
+        const action = actionButton.dataset.action;
+
+        if (action === "rename") {
+          editingId = habitId;
+          renderList(habitId);
+          requestAnimationFrame(() => {
+            const input = elements.habitList.querySelector(`[data-rename-input="${cssEscape(habitId)}"]`);
+            if (input) {
+              input.focus();
+              input.select();
+            }
+          });
+          return;
+        }
+
+        if (action === "cancel") {
+          editingId = null;
+          renderList(habitId);
+          return;
+        }
+
+        if (action === "delete") {
+          const confirmed = window.confirm(`确定删除“${habit.name}”吗？\n\n过去的打卡记录会继续保留。`);
+          if (!confirmed) return;
+
+          habit.archivedAt = new Date().toISOString();
+          editingId = null;
+          saveState();
+          render();
+          showToast(`已删除“${habit.name}”`);
+        }
+      }
+
+      function handleListKeydown(event) {
+        if (event.key !== "Escape" || !editingId) return;
+        event.preventDefault();
+        const habitId = editingId;
+        editingId = null;
+        renderList(habitId);
+      }
+
+      function handleRenameHabit(event) {
+        const form = event.target.closest("form[data-rename-form]");
+        if (!form) return;
+        event.preventDefault();
+
+        const habitId = form.dataset.habitId;
+        const habit = state.habits.find((item) => item.id === habitId && !item.archivedAt);
+        if (!habit) return;
+
+        const input = form.querySelector("[data-rename-input]");
+        const result = validateHabitName(input ? input.value : "", habitId);
+
+        if (result.error) {
+          showToast(result.error, "error");
+          if (input) input.focus();
+          return;
+        }
+
+        habit.name = result.name;
+        editingId = null;
+        saveState();
+        render();
+        showToast("习惯名称已更新");
+      }
+
+      function validateHabitName(rawName, excludeId = null) {
+        const name = String(rawName || "").trim();
+
+        if (!name) return { error: "请输入习惯名称" };
+        if (name.length > MAX_NAME_LENGTH) return { error: `习惯名称不能超过 ${MAX_NAME_LENGTH} 个字` };
+
+        const normalizedName = name.toLocaleLowerCase("zh-CN");
+        const duplicate = getActiveHabits().some((habit) => {
+          return habit.id !== excludeId && habit.name.toLocaleLowerCase("zh-CN") === normalizedName;
+        });
+
+        if (duplicate) return { error: "已有一个同名的习惯" };
+        return { name };
+      }
+
+      function render() {
+        renderDate();
+        renderList();
+        renderSummary();
+      }
+
+      function renderDate() {
+        const date = new Date();
+        elements.todayDate.dateTime = getLocalDateKey(date);
+        elements.todayDate.textContent = new Intl.DateTimeFormat("zh-CN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "long"
+        }).format(date);
+      }
+
+      function renderList(focusHabitId = null) {
+        const activeHabits = getActiveHabits();
+        const completedIds = getTodayCompletedIds();
+
+        elements.emptyState.hidden = activeHabits.length > 0;
+        elements.habitList.innerHTML = activeHabits.map((habit, index) => {
+          return renderHabitItem(habit, completedIds.has(habit.id), index);
+        }).join("");
+
+        if (focusHabitId) {
+          requestAnimationFrame(() => {
+            const nextFocus = elements.habitList.querySelector(`[data-focus-id="${cssEscape(focusHabitId)}"]`);
+            if (nextFocus) nextFocus.focus();
+          });
+        }
+      }
+
+      function renderHabitItem(habit, isComplete, index) {
+        const delay = Math.min(index, 8) * 35;
+        const safeId = escapeAttribute(habit.id);
+        const safeName = escapeHtml(habit.name);
+        const editLabel = `重命名“${escapeAttribute(habit.name)}”`;
+        const deleteLabel = `删除“${escapeAttribute(habit.name)}”`;
+        const className = isComplete ? "habit-item is-complete" : "habit-item";
+
+        if (editingId === habit.id) {
+          return `
+            <li class="${className}" data-habit-id="${safeId}" style="--delay:${delay}ms">
+              <form class="rename-form" data-rename-form data-habit-id="${safeId}">
+                <label class="sr-only" for="rename-${safeId}" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">编辑习惯名称</label>
+                <input class="rename-input" id="rename-${safeId}" data-rename-input="${safeId}" type="text" maxlength="${MAX_NAME_LENGTH}" value="${safeName}" aria-label="编辑习惯名称">
+                <div class="rename-actions">
+                  <button class="small-button" type="submit">保存</button>
+                  <button class="small-button secondary" type="button" data-action="cancel" data-habit-id="${safeId}">取消</button>
+                </div>
+              </form>
+            </li>`;
+        }
+
+        return `
+          <li class="${className}" data-habit-id="${safeId}" style="--delay:${delay}ms">
+            <label class="habit-toggle">
+              <input class="habit-checkbox" type="checkbox" data-habit-id="${safeId}" data-focus-id="${safeId}" ${isComplete ? "checked" : ""} aria-label="${isComplete ? "取消完成" : "标记完成"}“${escapeAttribute(habit.name)}”">
+              <span class="checkmark" aria-hidden="true">${icons.check}</span>
+              <span class="habit-name">${safeName}</span>
+            </label>
+            <div class="habit-actions">
+              <button class="icon-button" type="button" data-action="rename" data-habit-id="${safeId}" aria-label="${editLabel}" title="重命名">${icons.edit}</button>
+              <button class="icon-button danger" type="button" data-action="delete" data-habit-id="${safeId}" aria-label="${deleteLabel}" title="删除">${icons.trash}</button>
+            </div>
+          </li>`;
+      }
+      function renderSummary() {
+        const activeHabits = getActiveHabits();
+        const completedCount = getCompletedHabits().length;
+        const totalCount = activeHabits.length;
+        const remaining = Math.max(totalCount - completedCount, 0);
+        const percent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
+
+        elements.completedCount.textContent = String(completedCount);
+        elements.totalCount.textContent = String(totalCount);
+        elements.progressPercent.textContent = `${percent}%`;
+        elements.progressBar.style.width = `${percent}%`;
+        elements.progressTrack.setAttribute("aria-valuemax", String(totalCount));
+        elements.progressTrack.setAttribute("aria-valuenow", String(completedCount));
+
+        if (totalCount === 0) {
+          elements.progressCopy.textContent = "从一个小目标开始";
+          elements.listStatus.textContent = "还没有习惯";
+        } else if (remaining === 0) {
+          elements.progressCopy.textContent = "今天的习惯全部完成";
+          elements.listStatus.textContent = "今天全部完成，很棒";
+        } else if (completedCount === 0) {
+          elements.progressCopy.textContent = `还有 ${remaining} 项，慢慢来`;
+          elements.listStatus.textContent = `今天还差 ${remaining} 项`;
+        } else {
+          elements.progressCopy.textContent = `再完成 ${remaining} 项`;
+          elements.listStatus.textContent = `今天已完成 ${completedCount} / ${totalCount} 项`;
+        }
+      }
+
+      function refreshIfDateChanged() {
+        const latestDateKey = getLocalDateKey(new Date());
+        if (latestDateKey === currentDateKey) return;
+
+        currentDateKey = latestDateKey;
+        editingId = null;
+        render();
+        scheduleMidnightRefresh();
+        showToast("新的一天，从第一项开始吧");
+      }
+
+      function scheduleMidnightRefresh() {
+        window.clearTimeout(midnightTimer);
+        const now = new Date();
+        const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1, 0);
+        const delay = Math.max(nextMidnight.getTime() - now.getTime(), 1000);
+
+        midnightTimer = window.setTimeout(() => {
+          refreshIfDateChanged();
+          scheduleMidnightRefresh();
+        }, Math.min(delay, 2147483647));
+      }
+
+      function saveState() {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (error) {
+          console.error("保存习惯数据失败", error);
+          showToast("自动保存失败，请先导出备份", "error");
+        }
+      }
+
+      function loadState() {
+        let rawValue = null;
+
+        try {
+          rawValue = window.localStorage.getItem(STORAGE_KEY);
+        } catch (error) {
+          console.error("读取本地存储失败", error);
+          showToast("浏览器禁止了本地存储，本次数据可能无法保留", "error");
+          return createEmptyState();
+        }
+
+        if (!rawValue) return createEmptyState();
+
+        try {
+          return validateAndNormalizeState(JSON.parse(rawValue));
+        } catch (error) {
+          console.error("本地数据格式异常", error);
+          showToast("本地数据格式异常，已使用空白页面；原数据未被覆盖", "error");
+          return createEmptyState();
+        }
+      }
+
+      function validateAndNormalizeState(value) {
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+          throw new Error("备份内容不是有效对象");
+        }
+        if (value.version !== 1) throw new Error("不支持的备份版本");
+        if (!Array.isArray(value.habits)) throw new Error("习惯列表格式不正确");
+        if (!value.checkins || typeof value.checkins !== "object" || Array.isArray(value.checkins)) {
+          throw new Error("打卡记录格式不正确");
+        }
+
+        const habitIds = new Set();
+        const activeNames = new Set();
+        const habits = value.habits.map((habit, index) => {
+          if (!habit || typeof habit !== "object" || Array.isArray(habit)) {
+            throw new Error(`第 ${index + 1} 个习惯格式不正确`);
+          }
+
+          const id = String(habit.id || "").trim();
+          const name = String(habit.name || "").trim();
+
+          if (!id) throw new Error(`第 ${index + 1} 个习惯缺少 ID`);
+          if (habitIds.has(id)) throw new Error("备份中存在重复的习惯 ID");
+          if (!name) throw new Error(`第 ${index + 1} 个习惯名称为空`);
+          if (name.length > MAX_NAME_LENGTH) throw new Error(`习惯“${name}”的名称过长`);
+
+          const createdAt = normalizeTimestamp(habit.createdAt, `习惯“${name}”的创建时间`);
+          let archivedAt = null;
+
+          if (habit.archivedAt !== null && habit.archivedAt !== undefined) {
+            archivedAt = normalizeTimestamp(habit.archivedAt, `习惯“${name}”的删除时间`);
+          }
+
+          const nameKey = name.toLocaleLowerCase("zh-CN");
+          if (!archivedAt && activeNames.has(nameKey)) {
+            throw new Error(`存在重复的活动习惯名称：“${name}”`);
+          }
+
+          habitIds.add(id);
+          if (!archivedAt) activeNames.add(nameKey);
+          return { id, name, createdAt, archivedAt };
+        });
+
+        const checkins = {};
+
+        Object.entries(value.checkins).forEach(([dateKey, ids]) => {
+          if (!isValidDateKey(dateKey)) throw new Error(`打卡日期不正确：${dateKey}`);
+          if (!Array.isArray(ids)) throw new Error(`日期 ${dateKey} 的打卡记录格式不正确`);
+
+          const uniqueIds = [];
+          const seenIds = new Set();
+
+          ids.forEach((rawId) => {
+            const id = String(rawId || "").trim();
+            if (!id) throw new Error(`日期 ${dateKey} 中存在无效习惯 ID`);
+            if (!habitIds.has(id)) throw new Error(`打卡记录引用了不存在的习惯：${id}`);
+            if (!seenIds.has(id)) {
+              uniqueIds.push(id);
+              seenIds.add(id);
+            }
+          });
+
+          if (uniqueIds.length > 0) checkins[dateKey] = uniqueIds;
+        });
+
+        return { version: 1, habits, checkins };
+      }
+
+      function normalizeTimestamp(value, label) {
+        if (typeof value !== "string" || Number.isNaN(Date.parse(value))) {
+          throw new Error(`${label}格式不正确`);
+        }
+        return new Date(value).toISOString();
+      }
+      function exportBackup() {
+        try {
+          const content = JSON.stringify(state, null, 2);
+          const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `habit-backup-${currentDateKey}.json`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+          showToast("备份文件已导出");
+        } catch (error) {
+          console.error("导出备份失败", error);
+          showToast("导出失败，请稍后重试", "error");
+        }
+      }
+
+      async function importBackup(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        try {
+          if (file.size > 5 * 1024 * 1024) throw new Error("备份文件不能超过 5 MB");
+
+          const text = await file.text();
+          const importedState = validateAndNormalizeState(JSON.parse(text));
+          const activeCount = importedState.habits.filter((habit) => !habit.archivedAt).length;
+          const recordCount = Object.keys(importedState.checkins).length;
+          const confirmed = window.confirm(
+            `导入将完全替换当前数据。\n\n备份包含 ${activeCount} 个习惯、${recordCount} 天打卡记录。\n\n确定继续吗？`
+          );
+
+          if (!confirmed) return;
+
+          state = importedState;
+          currentDateKey = getLocalDateKey(new Date());
+          editingId = null;
+          saveState();
+          render();
+          showToast("备份已导入并保存");
+        } catch (error) {
+          console.error("导入备份失败", error);
+          showToast(`导入失败：${error.message || "文件内容不正确"}`, "error");
+        } finally {
+          elements.importInput.value = "";
+        }
+      }
+
+      function celebrate() {
+        if (reducedMotion.matches) {
+          showToast("今天的习惯全部完成啦！");
+          return;
+        }
+
+        window.clearTimeout(celebrationTimer);
+        elements.celebration.replaceChildren();
+
+        const message = document.createElement("div");
+        message.className = "celebration-message";
+        message.innerHTML = "<strong>太棒了，今天全部完成！</strong><span>每一次坚持都算数</span>";
+        elements.celebration.appendChild(message);
+
+        const colors = ["#f6d58f", "#a9dfba", "#ffffff", "#f3a98f", "#9ed8d1", "#d7bcf2"];
+
+        for (let index = 0; index < 24; index += 1) {
+          const piece = document.createElement("span");
+          const angle = (Math.PI * 2 * index) / 24 + (Math.random() - 0.5) * 0.35;
+          const distance = 130 + Math.random() * 180;
+          piece.className = "confetti";
+          piece.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
+          piece.style.setProperty("--y", `${Math.sin(angle) * distance + 40}px`);
+          piece.style.setProperty("--rotation", `${Math.round(Math.random() * 720 - 360)}deg`);
+          piece.style.setProperty("--delay", `${Math.random() * 0.12}s`);
+          piece.style.setProperty("--color", colors[index % colors.length]);
+          elements.celebration.appendChild(piece);
+        }
+
+        elements.celebration.classList.add("is-visible");
+        celebrationTimer = window.setTimeout(() => {
+          elements.celebration.classList.remove("is-visible");
+          elements.celebration.replaceChildren();
+        }, 1900);
+      }
+
+      function showToast(message, type = "success") {
+        window.clearTimeout(toastTimer);
+        elements.toast.textContent = message;
+        elements.toast.dataset.type = type;
+        elements.toast.classList.add("is-visible");
+        toastTimer = window.setTimeout(() => {
+          elements.toast.classList.remove("is-visible");
+        }, type === "error" ? 4200 : 2600);
+      }
+
+      function getLocalDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function isValidDateKey(value) {
+        const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+        if (!match) return false;
+
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+        const date = new Date(year, month - 1, day);
+
+        return date.getFullYear() === year
+          && date.getMonth() === month - 1
+          && date.getDate() === day;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll("`", "&#096;");
+      }
+
+      function cssEscape(value) {
+        if (window.CSS && typeof window.CSS.escape === "function") return window.CSS.escape(value);
+        return String(value).replace(/["\\]/g, "\\$&");
+      }
+    })();
+  </script>
+</body>
+</html>
